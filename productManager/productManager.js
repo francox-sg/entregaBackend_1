@@ -8,10 +8,16 @@ class ProductManager{
     }
 
     //Metodo Obtener Productos
-    async getProducts(){
+    async getProducts(limit = undefined){
         if(fs.existsSync(this.path)){
-            const products = await fs.promises.readFile(this.path,'utf-8');
-            return JSON.parse(products)
+            let products = await fs.promises.readFile(this.path,'utf-8');
+            products= JSON.parse(products)
+
+            if(limit < products.length){
+                products = products.slice(0, limit)
+            }
+            
+            return products
         }
         return []
     }
@@ -38,7 +44,7 @@ class ProductManager{
     async addProduct(prodToAdd){
         let id = uuidv4();
         let productos = []
-        let newProd= prodToAdd;
+        let newProd= {status:true, ...prodToAdd};
 
         //Si existe el archivo
         if(fs.existsSync(this.path)){                                               
@@ -112,17 +118,17 @@ class ProductManager{
 }
 
 
-export const ProductMgr = new ProductManager('./productManager/products.json')
+export const ProductMgr = new ProductManager('./productManager/productos.json')
 
 
 
 const test = async ()=>{
-    //const prods = await ProductMgr.getProducts();
+    //const prods = await ProductMgr.getProducts(5);
     //console.log(prods);
     //await ProductMgr.addProduct({quantity:3, title:"zapatillas"})
     //await ProductMgr.updateProduct(2,{id:2, title:"Campera"})
     // await ProductMgr.deleteProduct(4)
-/*     await ProductMgr.addProduct({   title: 'Camisa',
+    /* await ProductMgr.addProduct({   title: 'Camisa',
                                     description: 'Remera Negra Talle S',
                                     code: 'CODE1',
                                     price: 7000,
@@ -134,11 +140,11 @@ const test = async ()=>{
                                     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSSyhd5GXOhOhGJrKvnXv_RLEUCWuwk2jEo7w&s',
                                     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTANly1i52CXwPW1ZP7nuXrrg99Jzf_RUJ8TQ&s'
                                     ]
-                                })
- */
+                                }) */
+ 
     //console.log(await ProductMgr.getProductById(2));
 
 }
 
-test();
+//test();
 

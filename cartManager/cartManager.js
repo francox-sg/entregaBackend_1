@@ -88,7 +88,7 @@ class CartManager{
 }
 
 
-export const CartMgr = new CartManager('./cartManager/carts.json')
+export const CartMgr = new CartManager('./cartManager/carrito.json')
 
 const test = async ()=>{
     //await CartMgr.addCart();

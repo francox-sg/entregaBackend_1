@@ -1,14 +1,15 @@
 import { Router } from 'express'; //Punto de entrada de Router de Express
 import {ProductMgr} from '../../productManager/productManager.js'
-
+import { validarNewProduct} from '../../middlewares/middlewares.js';
 
 
 const router = Router();
 
 //Devolver todos los Productos
 router.get('/', async(req, res)=>{
+    const {limit} = req.query;
     try{
-        res.json( await ProductMgr.getProducts())
+        res.status(200).json( await ProductMgr.getProducts(limit))
     }
     catch(error){
         res.status(404).json({msj:"error"})
@@ -21,9 +22,9 @@ router.get('/:pid', async(req, res)=>{
     try{
         const product = await ProductMgr.getProductById(pid);
         if(product != -1){
-            res.json( product)
+            res.status(200).json( product)
         }else{
-            res.send("El Producto No Existe")
+            res.status(404).send("El Producto No Existe")
         }
         
     }
@@ -32,14 +33,16 @@ router.get('/:pid', async(req, res)=>{
     }
 })
 
+
+
 //Agregar Producto
-router.post('/', async(req, res)=>{
+router.post('/', validarNewProduct, async(req, res)=>{
     
     const newProduct = req.body;
     
     try{
         
-        res.json( await ProductMgr.addProduct(newProduct))
+        res.status(200).json( await ProductMgr.addProduct(newProduct))
     }
     catch(error){
         res.status(404).json({msj:"error"})
@@ -53,9 +56,9 @@ router.put('/:pid', async(req, res)=>{
     try{
         const productoActualizado = await ProductMgr.updateProduct(pid, newProductValues)
         if(productoActualizado != -1){
-            res.json(productoActualizado)
+            res.status(200).json(productoActualizado)
         }else{
-            res.send("El Producto No Existe")
+            res.status(404).send("El Producto No Existe")
         }
     }
     catch(error){
@@ -70,9 +73,9 @@ router.delete('/:pid', async(req, res)=>{
     try{
         const status = await ProductMgr.deleteProduct(pid)
         if (status !=-1){
-            res.json("Producto Borrado Con Exito")
+            res.status(200).json("Producto Borrado Con Exito")
         }else{
-            res.send("El Producto No Existe")
+            res.status(404).send("El Producto No Existe")
         }
     }
     catch(error){
