@@ -16,6 +16,24 @@ class ProductManager{
         return []
     }
 
+    //Metodo Obtener Producto Por ID
+    async getProductById(id){
+        if(fs.existsSync(this.path)){
+            const products = await this.getProducts()
+
+            const index = products.findIndex((prod)=>{ return prod.id === id})
+            console.log("index: ",index);
+            if(index != -1){
+                console.log("Producto obtenido");
+                return products[index]
+            }
+        }
+        console.log("Producto inexistente");
+        return -1
+
+
+    }
+
     //Metodo Agregar Producto
     async addProduct(prodToAdd){
         let id = uuidv4();
@@ -36,8 +54,9 @@ class ProductManager{
         newProd["id"]=id;
         console.log("Nuevo Producto es ",newProd);
         productos.push(newProd);
-        await fs.writeFileSync(this.path, JSON.stringify(productos))
+        await fs.promises.writeFile(this.path, JSON.stringify(productos))
         console.log("Se Agrego el nuevo Producto");
+        return newProd;
     
     }
 
@@ -48,21 +67,25 @@ class ProductManager{
         delete prodToUpdateNoID.id
 
         let products = await this.getProducts();
-        
+        let productReturn= {}
+
         if(products.some((prod)=>{return prod.id === prodId})){
             
             products = products.map((prod)=>{
                 if(prod.id === prodId){
-                    return ({...prod, ...prodToUpdateNoID})
+                    productReturn = {...prod, ...prodToUpdateNoID}
+                    return (productReturn)
                 }else{
                     return prod
                 }
             })
-            await fs.writeFileSync(this.path, JSON.stringify(products))
+            await fs.promises.writeFile(this.path, JSON.stringify(products))
             console.log("Se actualizó el producto correctamente");
+            return productReturn
             }
         else{
             console.log(`El producto con ID ${prodId} no existe`);
+            return -1
             }
     }
 
@@ -77,18 +100,21 @@ class ProductManager{
             const index = products.findIndex((prod) => prod.id === prodId );
             products.splice(index,1)
             
-            await fs.writeFileSync(this.path, JSON.stringify(products))
+            await fs.promises.writeFile(this.path, JSON.stringify(products))
             console.log("Se eliminó el producto correctamente");
         }
         else{
             console.log(`El producto con ID ${prodId} no existe`);
+            return -1
             }
     }
 
 }
 
 
-const ProductMgr = new ProductManager('./productManager/products.json')
+export const ProductMgr = new ProductManager('./productManager/products.json')
+
+
 
 const test = async ()=>{
     //const prods = await ProductMgr.getProducts();
@@ -110,6 +136,7 @@ const test = async ()=>{
                                     ]
                                 })
  */
+    //console.log(await ProductMgr.getProductById(2));
 
 }
 

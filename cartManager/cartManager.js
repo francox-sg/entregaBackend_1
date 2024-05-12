@@ -35,7 +35,8 @@ class CartManager{
         }
 
         carts.push(cart);
-        await fs.writeFileSync(this.path, JSON.stringify(carts))
+        await fs.promises.writeFile(this.path, JSON.stringify(carts))
+        return cart
         console.log("Se Agregó el Cart con ID: ",id); 
     }
 
@@ -53,9 +54,9 @@ class CartManager{
 
     }
 
-    async addProductToCart(cartId, prodId, quantity){
-        if(quantity > 0){
-
+    //Metodo Agregar Producto a Cart
+    async addProductToCart(cartId, prodId){
+        
             let carts = await this.getCarts()
             
             //Busqueda de Cart
@@ -69,17 +70,17 @@ class CartManager{
             const productIndex = carts[cartIndex].products.findIndex((prod) => {return prod.id===prodId} )
     
             if(productIndex === -1){
-                carts[cartIndex].products.push({id:prodId, quantity:quantity})
+                carts[cartIndex].products.push({id:prodId, quantity:1})
                 console.log("No existia producto, se agregó prodID: ",prodId);
             }else{
-                carts[cartIndex].products[productIndex].quantity += quantity;
-                console.log("El producto ya existia en carrito, se agregaron ", quantity, " unidades");
+                carts[cartIndex].products[productIndex].quantity += 1;
+                console.log("El producto ya existia en carrito, se agrego 1 unidad");
             }
     
-            await fs.writeFileSync(this.path, JSON.stringify(carts))
-        }else{
-            console.log("La cantidad debe ser mayor que Cero");
-        }
+            await fs.promises.writeFile(this.path, JSON.stringify(carts))
+            
+            return carts[cartIndex]
+        
 
     }
 
@@ -87,7 +88,7 @@ class CartManager{
 }
 
 
-const CartMgr = new CartManager('./cartManager/carts.json')
+export const CartMgr = new CartManager('./cartManager/carts.json')
 
 const test = async ()=>{
     //await CartMgr.addCart();
