@@ -44,7 +44,7 @@ class ProductManager{
     async addProduct(prodToAdd){
         let id = uuidv4();
         let productos = []
-        let newProd= {status:true, ...prodToAdd};
+        let newProd= {...prodToAdd, status:true};
 
         //Si existe el archivo
         if(fs.existsSync(this.path)){                                               

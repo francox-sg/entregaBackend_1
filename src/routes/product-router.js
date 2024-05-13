@@ -39,11 +39,26 @@ router.get('/:pid', async(req, res)=>{
 //Agregar Producto
 router.post('/', validarNewProduct, async(req, res)=>{
     
-    const newProduct = req.body;
-    
+    //const newProduct = req.body;
+
+    //Prevengo que no se agreguen campos adicionales si vienen por req
+    const {title, description, code, price, status, stock, category, thumbnails} = req.body;
+
+
+    let newProductValues = {}
+    if(title != undefined)         {newProductValues["title"]       = title}
+    if(description != undefined)   {newProductValues["description"] = description}
+    if(code != undefined)          {newProductValues["code"]        = code}
+    if(price != undefined)         {newProductValues["price"]       = price}
+    if(status != undefined)        {newProductValues["status"]      = status}
+    if(stock != undefined)         {newProductValues["stock"]       = stock}
+    if(category != undefined)      {newProductValues["category"]    = category}
+    if(thumbnails != undefined)      {newProductValues["thumbnails"]    = thumbnails}
+
+
     try{
         
-        res.status(200).json( await ProductMgr.addProduct(newProduct))
+        res.status(200).json( await ProductMgr.addProduct(newProductValues))
     }
     catch(error){
         res.status(404).json({msj:"error"})
@@ -55,7 +70,7 @@ router.put('/:pid', validarPut, async(req, res)=>{
     const {pid} = req.params
     
     //Prevengo que no se agreguen campos adicionales si vienen por req
-    const {title, description, code, price, status, stock, category} = req.body;
+    const {title, description, code, price, status, stock, category, thumbnails} = req.body;
 
 
     let newProductValues = {}
@@ -66,6 +81,7 @@ router.put('/:pid', validarPut, async(req, res)=>{
     if(status != undefined)        {newProductValues["status"]      = status}
     if(stock != undefined)         {newProductValues["stock"]       = stock}
     if(category != undefined)      {newProductValues["category"]    = category}
+    if(thumbnails != undefined)      {newProductValues["thumbnails"]    = thumbnails}
 
 
     try{
