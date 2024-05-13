@@ -1,6 +1,7 @@
 import { Router } from 'express'; //Punto de entrada de Router de Express
 import {ProductMgr} from '../../productManager/productManager.js'
 import { validarNewProduct} from '../../middlewares/middlewares.js';
+import { validarPut } from '../../middlewares/middlewares.js';
 
 
 const router = Router();
@@ -50,9 +51,23 @@ router.post('/', validarNewProduct, async(req, res)=>{
 })
 
 //Actualizar Producto
-router.put('/:pid', async(req, res)=>{
+router.put('/:pid', validarPut, async(req, res)=>{
     const {pid} = req.params
-    const newProductValues = req.body;
+    
+    //Prevengo que no se agreguen campos adicionales si vienen por req
+    const {title, description, code, price, status, stock, category} = req.body;
+
+
+    let newProductValues = {}
+    if(title != undefined)         {newProductValues["title"]       = title}
+    if(description != undefined)   {newProductValues["description"] = description}
+    if(code != undefined)          {newProductValues["code"]        = code}
+    if(price != undefined)         {newProductValues["price"]       = price}
+    if(status != undefined)        {newProductValues["status"]      = status}
+    if(stock != undefined)         {newProductValues["stock"]       = stock}
+    if(category != undefined)      {newProductValues["category"]    = category}
+
+
     try{
         const productoActualizado = await ProductMgr.updateProduct(pid, newProductValues)
         if(productoActualizado != -1){
