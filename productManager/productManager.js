@@ -42,6 +42,7 @@ class ProductManager{
 
     //Metodo Agregar Producto
     async addProduct(prodToAdd){
+        
         let id = uuidv4();
         let productos = []
         let newProd= {...prodToAdd, status:true};

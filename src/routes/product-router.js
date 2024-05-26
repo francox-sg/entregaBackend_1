@@ -2,7 +2,7 @@ import { Router } from 'express'; //Punto de entrada de Router de Express
 import {ProductMgr} from '../../productManager/productManager.js'
 import { validarNewProduct} from '../../middlewares/middlewares.js';
 import { validarPut } from '../../middlewares/middlewares.js';
-
+import { socketServer } from '../../serverExpress.js';
 
 const router = Router();
 
@@ -63,6 +63,11 @@ router.post('/', validarNewProduct, async(req, res)=>{
     catch(error){
         res.status(404).json({msj:"error"})
     }
+
+    //Actualizacion de socket ante cambio por Http
+    const socketProducts =  await ProductMgr.getProducts()
+    socketServer.emit('getProducts', socketProducts)
+
 })
 
 //Actualizar Producto
@@ -95,6 +100,10 @@ router.put('/:pid', validarPut, async(req, res)=>{
     catch(error){
         res.status(404).json({msj:"error"})
     }
+
+    //Actualizacion de socket ante cambio por Http
+    const socketProducts =  await ProductMgr.getProducts()
+    socketServer.emit('getProducts', socketProducts)
 })
 
 //Borrar Producto
@@ -112,6 +121,10 @@ router.delete('/:pid', async(req, res)=>{
     catch(error){
         res.status(404).json({msj:"error"})
     }
+
+    //Actualizacion de socket ante cambio por Http
+    const socketProducts =  await ProductMgr.getProducts()
+    socketServer.emit('getProducts', socketProducts)
 })
 
 export default router
